@@ -10,6 +10,18 @@ conn = mariadb.connect(
 )
 cursor = conn.cursor()
 
+def login():
+    username = input("Please provide a username: ")
+    password = input("Please provide a password: ")
+    logged_in = "SELECT id FROM client WHERE username (?,?)"
+    cursor.execute(logged_in, (username, password))
+    results = cursor.fetchone()
+    if results is True:
+        id = results[0]
+        print(id)
+    else:
+        print("Incorrect Username and/or Password")
+
 def prompt():
     print("Welcome to BLOGGER!\
         \nPlease select from the following:\
@@ -20,22 +32,24 @@ def prompt():
     return selection
 
 def blogger():
-    username = input("Please provide a username: ")
-    password = input("Please provide a password: ")
     cursor.execute("SELECT * FROM client")
     result = cursor.fetchall()
     print(result)
 
-def client(client_id):
-    input("Title: ")
-    input("Post: ")
+def client_post(client_id):
+    title = input("Title: ")
+    content = input("Post: ")
+    make_post = "SELECT id FROM client WHERE username (?,?,?)"
+    cursor.execute(make_post, (client_id, title, content))
 
 def posts():
     cursor.execute("SELECT * FROM posts")
     result = cursor.fetchall()
-    print(result)
+    for post in result:
+        print(post)
 
 def choice():
+    login()
     print("Welcome to the application!")
     while True:
         try:
@@ -44,7 +58,7 @@ def choice():
             print("Please enter numbers only")
             continue
         if selection == 1:
-            client()
+            client_post()
         elif selection == 2:
             posts()
         elif selection == 3:
